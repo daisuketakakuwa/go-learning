@@ -221,18 +221,18 @@ func GetConnection() {
 
 ```go
 func main() {
-	p1 := Person{"daisuke", 26}
-	// & で 変数のメモリアドレス を取得
-	// "ポインタ変数" の型は「const pointerVar *string」と表現する。
-	var p2 *Person = &p1
+    p1 := Person{"daisuke", 26}
+    // & で 変数のメモリアドレス を取得
+    // "ポインタ変数" の型は「const pointerVar *string」と表現する。
+    var p2 *Person = &p1
     // or
     p2 := &p2
 
 
-	fmt.Println("person info", p1) // person info {daisuke 26}
-	fmt.Println("memory address", &p2) // memory address 0xc000006028
-	// *ポインタ変数 で中身を参照
-	fmt.Println("person info", *p2) // person info {daisuke 26}
+    fmt.Println("person info", p1) // person info {daisuke 26}
+    fmt.Println("memory address", &p2) // memory address 0xc000006028
+    // *ポインタ変数 で中身を参照
+    fmt.Println("person info", *p2) // person info {daisuke 26}
 }
 ```
 
@@ -240,8 +240,8 @@ func main() {
 
 ```go
 type Person struct {
-	Name string
-	Age int
+    Name string
+    Age int
 }
 
 // 型が ポインタ ではない場合、新しくstructが生成される
@@ -254,7 +254,7 @@ func (p Person) Introduce(msg string) {
 // 型が ポインタ -である場合、呼び出し元のstructのポインタが渡される。
 func (p *Person) Introduce(msg string) {
     p.Age = p.Age + "歳"
-	fmt.Println("NAME: ", p.Name, "AGE: ", p.Age, msg)
+    fmt.Println("NAME: ", p.Name, "AGE: ", p.Age, msg)
 }
 ```
 
@@ -262,26 +262,26 @@ func (p *Person) Introduce(msg string) {
 
 ```go
 type Product struct {
-	Id string
-	Name string
-	Company  // Field名 = 型名 なので型定義不要
+    Id string
+    Name string
+    Company  // Field名 = 型名 なので型定義不要
 }
 
 type Company struct {
-	Id string
-	Name string
+    Id string
+    Name string
 }
 
 func main() {
-	product1 := Product{"p001", "iPhone", Company{"c001", "Apple"}}
+    product1 := Product{"p001", "iPhone", Company{"c001", "Apple"}}
 ```
 
 ### NewXxxx - struct 生成用の関数を作るのが定番らしい
 
 ```go
 type Person struct {
-	Name string
-	Age int
+    Name string
+    Age int
 }
 
 func NewPerson(id string, age int) *Person {
@@ -289,10 +289,10 @@ func NewPerson(id string, age int) *Person {
 }
 
 func main() {
-	// Pointerが返ってきている
-	p1 := NewPerson("daisuke", 26)
-	// 値を参照
-	fmt.Println(*p1) // {daisuke, 26}
+    // Pointerが返ってきている
+    p1 := NewPerson("daisuke", 26)
+    // 値を参照
+    fmt.Println(*p1) // {daisuke, 26}
 ```
 
 ## Package と Module
@@ -344,7 +344,7 @@ func FindProductById(id int) {
 
 ```go
 func add(x, y int) int {
-	return x + y
+    return x + y
 }
 ```
 
@@ -352,12 +352,12 @@ func add(x, y int) int {
 
 ```go
 func swap(x, y string) (string, string) {
-	return y, x
+    return y, x
 }
 
 func main() {
-	a, b := swap("hello", "world")
-	fmt.Println(a, b)
+    a, b := swap("hello", "world")
+    fmt.Println(a, b)
 }
 ```
 
@@ -365,8 +365,8 @@ func main() {
 
 ```go
 func SplitNames(nameStr string) (res []string) {
-	res = strings.Split(nameStr, ",")
-	return
+    res = strings.Split(nameStr, ",")
+    return
 }
 ```
 
@@ -375,16 +375,16 @@ func SplitNames(nameStr string) (res []string) {
 
 ```go
 func hello(nums ...int) {
-	for _, val := range nums {
-		fmt.Println(val)
-	}
+    for _, val := range nums {
+        fmt.Println(val)
+    }
 }
 
 func main() {
-	hello(1,2,3,4,5)
+    hello(1,2,3,4,5)
 
-	slice1 := []int{1,2,3,4,5}
-	hello(slice1...)
+    slice1 := []int{1,2,3,4,5}
+    hello(slice1...)
 }
 ```
 
@@ -405,22 +405,22 @@ func main() {
 
 ```go
 func main() {
-	name := "takakuwa"
-	// defer(遅延)させた関数に渡した引数 name は即時評価
-	defer fmt.Printf("My name is %s", name)
-	name = "makito"
+    name := "takakuwa"
+    // defer(遅延)させた関数に渡した引数 name は即時評価
+    defer fmt.Printf("My name is %s", name)
+    name = "makito"
 
-	// "My name is takakuwa"
+    // "My name is takakuwa"
 ```
 
 - LIFO なので 最後に defer した関数から実行される。
 
 ```go
 func main() {
-	for i := 1 ; i < 10 ; i++ {
-		defer fmt.Println(i)
-	}
-	// 9,8,7,6,5,4,3,2,1
+    for i := 1 ; i < 10 ; i++ {
+        defer fmt.Println(i)
+    }
+    // 9,8,7,6,5,4,3,2,1
 ```
 
 ## Defer で Panic を対処/Recover する。
@@ -434,33 +434,33 @@ func main() {
 ```go
 // hello関数よりpanicがreturnされ、main関数が異常終了する。
 func hello() {
-	fmt.Println("★1")
-	panic("some error")
-	fmt.Println("★2")
+    fmt.Println("★1")
+    panic("some error")
+    fmt.Println("★2")
 }
 
 func main() {
-	hello()
+    hello()
 }
 ```
 
 ```go
 func hello() {
-	// panic が returnされる前に実行される
-	defer func() {
-		// recover() -> panicの引数
-		if r := recover(); r != nil {
-			fmt.Printf("Error message: %s", r) // PANIC ERROR MESSAGE
-		}
-	}()
+    // panic が returnされる前に実行される
+    defer func() {
+        // recover() -> panicの引数
+        if r := recover(); r != nil {
+            fmt.Printf("Error message: %s", r) // PANIC ERROR MESSAGE
+        }
+    }()
 
-	fmt.Println("★1")
-	panic("PANIC ERROR MESSAGE")
-	fmt.Println("★2")
+    fmt.Println("★1")
+    panic("PANIC ERROR MESSAGE")
+    fmt.Println("★2")
 }
 
 func main() {
-	hello()
+    hello()
 }
 ```
 
@@ -482,24 +482,24 @@ func main() {
 
 ```go
 func storeName() func(name string) []string {
-	var nameStore []string
-	return func(name string) []string {
-		if (name != "") {
-			nameStore = append(nameStore, name)
-		}
-		return nameStore
-	}
+    var nameStore []string
+    return func(name string) []string {
+        if (name != "") {
+            nameStore = append(nameStore, name)
+        }
+        return nameStore
+    }
 }
 
 func main() {
-	xstoreName := storeName()
-	xstoreName("takakuwa")
-	xstoreName("makito")
-	xstoreName("fumi")
+    xstoreName := storeName()
+    xstoreName("takakuwa")
+    xstoreName("makito")
+    xstoreName("fumi")
 
-	for _, val := range xstoreName("") {
-		fmt.Println(val) // takakuwa, makito, fumi
-	}
+    for _, val := range xstoreName("") {
+        fmt.Println(val) // takakuwa, makito, fumi
+    }
 ```
 
 ## interface と interface{}
@@ -516,30 +516,30 @@ func main() {
 // }
 
 type InternalServerError struct {
-	message string
+    message string
 }
 
 func (err *InternalServerError) Error() string {
-	return fmt.Sprintf("500 Error: %s", err.message)
+    return fmt.Sprintf("500 Error: %s", err.message)
 }
 
 type BadRequestError struct {
-	message string
+    message string
 }
 
 func (err *BadRequestError) Error() string {
-	return fmt.Sprintf("400 Error: %s", err.message)
+    return fmt.Sprintf("400 Error: %s", err.message)
 }
 
 func validateRequest() (err error) {
-	// Validationエラーがあったとして
-	return &BadRequestError{"ItemA is invalid value."}
+    // Validationエラーがあったとして
+    return &BadRequestError{"ItemA is invalid value."}
 }
 
 func main() {
-	if err := validateRequest(); err != nil {
-		fmt.Println(err.Error()) // 400 Error: ItemA is invalid value.
-	}
+    if err := validateRequest(); err != nil {
+        fmt.Println(err.Error()) // 400 Error: ItemA is invalid value.
+    }
 ```
 
 ### interface{}
@@ -591,34 +591,34 @@ func main() {
 
 ```go
 func main() {
-	num := 500
-	// if cond
-	if num < 100 {
-		fmt.Println("num less than 100")
-	} else if num >= 100 & num < 500 {
-		fmt.Println("num is between 100 to 499")
-	} else {
-		fmt.Println("num is over thatn 500")
-	}
+    num := 500
+    // if cond
+    if num < 100 {
+        fmt.Println("num less than 100")
+    } else if num >= 100 & num < 500 {
+        fmt.Println("num is between 100 to 499")
+    } else {
+        fmt.Println("num is over thatn 500")
+    }
 ```
 
 if 文 with initialization
 
 ```go
 func calcBMI(height float32, weight float32) (bmi float32) {
-	bmi =  weight / (height * height)
-	return
+    bmi =  weight / (height * height)
+    return
 }
 
 func main() {
-	var height float32 = 1.8
-	var weight float32 = 74.5
-	// if initialization ; cond
-	if bmi := calcBMI(height,weight); bmi > 25 {
-		fmt.Println("肥満")
-	} else if bmi < 25 {
-		fmt.Println("NOT肥満")
-	}
+    var height float32 = 1.8
+    var weight float32 = 74.5
+    // if initialization ; cond
+    if bmi := calcBMI(height,weight); bmi > 25 {
+        fmt.Println("肥満")
+    } else if bmi < 25 {
+        fmt.Println("NOT肥満")
+    }
 ```
 
 ### for
@@ -627,7 +627,7 @@ func main() {
 
 ```go
 for i := 0; i < 10; i++ {
-	fmt.Println("HELLO WORLD", i)
+    fmt.Println("HELLO WORLD", i)
 }
 ```
 
@@ -636,10 +636,10 @@ for 1 ; 2 ; 3 { }
 
 ```go
 func main() {
-	sum := 1
-	for ; sum < 1000 ; {
-		sum += sum
-	}
+    sum := 1
+    for ; sum < 1000 ; {
+        sum += sum
+    }
 }
 ```
 
@@ -647,20 +647,20 @@ func main() {
 
 ```go
 func main() {
-	nums := []string{"A","B","C","D","E"}
-	for idx, val := range nums {
-		fmt.Printf("index:%d, value:%s \n", idx, val)
-	}
+    nums := []string{"A","B","C","D","E"}
+    for idx, val := range nums {
+        fmt.Printf("index:%d, value:%s \n", idx, val)
+    }
 ```
 
 ### while 文(存在しないので for 文で実現)
 
 ```go
 func main() {
-	sum := 1
-	for sum < 1000 {
-		sum += sum
-	}
+    sum := 1
+    for sum < 1000 {
+        sum += sum
+    }
 }
 ```
 
@@ -728,15 +728,15 @@ nums := []string{"A","B","C","D","E"}
 ```go
 // sliceはポインタなので 関数を渡っても同じインスタンスが使われる
 func hello(slice []int) {
-	slice[0] = 999
+    slice[0] = 999
 }
 
 func main() {
-	numbers := []int{1,2,3,4,5}
-	hello(numbers)
-	for _, val := range numbers {
-		fmt.Println(val) // [999,2,3,4,5]
-	}
+    numbers := []int{1,2,3,4,5}
+    hello(numbers)
+    for _, val := range numbers {
+    fmt.Println(val) // [999,2,3,4,5]
+    }
 }
 ```
 
@@ -747,24 +747,24 @@ append 関数 -> 要素が追加された配列を返す。第 2 引数は可変
 
 ```go
 func main() {
-	// 第1引数-sliceの型  第2引数-slice要素数(拡張可能)
-	names := make([]int, 5) // [0,0,0,0,0]
-	fmt.Println(len(names), cap(names)) // 5, 5
-	names = append(names, 1) // [0,0,0,0,0,1]
-	fmt.Println(len(names), cap(names)) // 6, 10
-	names = append(names, 2,3,4) // [0,0,0,0,0,1,2,3,4]
-	fmt.Println(len(names), cap(names)) // 9, 10
-	for _, name := range names {
-		fmt.Println(name)
-	}
+    // 第1引数-sliceの型  第2引数-slice要素数(拡張可能)
+    names := make([]int, 5) // [0,0,0,0,0]
+    fmt.Println(len(names), cap(names)) // 5, 5
+    names = append(names, 1) // [0,0,0,0,0,1]
+    fmt.Println(len(names), cap(names)) // 6, 10
+    names = append(names, 2,3,4) // [0,0,0,0,0,1,2,3,4]
+    fmt.Println(len(names), cap(names)) // 9, 10
+    for _, name := range names {
+        fmt.Println(name)
+    }
 ```
 
 ### Slicing ... 配列より Slice 作成
 
 ```go
 func main() {
-  array := [5]int{1, 2, 3, 4, 5}
-  slice := array[1:2]
+    array := [5]int{1, 2, 3, 4, 5}
+    slice := array[1:2]
 ```
 
 ### Slice1 をコピーして Slice2 を作成する（異なるメモリアドレスで）
@@ -774,13 +774,13 @@ func main() {
 ```go
 // 同じメモリアドレスを共有してる
 func main() {
-	slice1 := []int{1,2,3,4,5}
-	slice2 := slice1[:]
+    slice1 := []int{1,2,3,4,5}
+    slice2 := slice1[:]
 
-	slice2[1] = 100
+    slice2[1] = 100
 
-	fmt.Println(slice1) // [100,2,3,4,5]
-	fmt.Println(slice2) // [100,2,3,4,5]
+    fmt.Println(slice1) // [100,2,3,4,5]
+    fmt.Println(slice2) // [100,2,3,4,5]
 ```
 
 - 新しいインスタンス(異なるメモリアドレス)を作成する場合は、<br>①append 関数で slice1 をもとに slice2 を作成する。<br>②make 関数で作った slice2 へ copy 関数で slice1 要素を追加する。<br>③ make 関数で slice2 を作成して そこにループで slice1 要素を追加する。
@@ -790,27 +790,27 @@ func main() {
 ```go
 // appendの第2引数は可変長引数なので sliceのまま渡せないから ...
 func main() {
-	slice1 := []int{1,2,3,4,5}
-	slice2 := append([]int{}, slice1...)
+    slice1 := []int{1,2,3,4,5}
+    slice2 := append([]int{}, slice1...)
 
-	slice1[0] = 999
+    slice1[0] = 999
 
-	fmt.Println(slice1) // [999,2,3,4,5]
-	fmt.Println(slice2) // [1,2,3,4,5]
+    fmt.Println(slice1) // [999,2,3,4,5]
+    fmt.Println(slice2) // [1,2,3,4,5]
 ```
 
 ②make 関数で作った slice2 へ copy 関数で slice1 要素を追加する。
 
 ```go
 func main() {
-	slice1 := []int{1,2,3,4,5}
-	slice2 := make([]int, len(slice1))
-	copy(slice2, slice1) // copy(dist, src)
+    slice1 := []int{1,2,3,4,5}
+    slice2 := make([]int, len(slice1))
+    copy(slice2, slice1) // copy(dist, src)
 
-	slice1[0] = 999
+    slice1[0] = 999
 
-	fmt.Println(slice1)
-	fmt.Println(slice2)
+    fmt.Println(slice1)
+    fmt.Println(slice2)
 }
 ```
 
@@ -819,17 +819,17 @@ func main() {
 ```go
 // 異なるメモリアドレス
 func main() {
-	slice1 := []int{1,2,3,4,5}
-	slice2 := make([]int, len(slice1))
+    slice1 := []int{1,2,3,4,5}
+    slice2 := make([]int, len(slice1))
 
-	for idx, val := range slice1 {
-		slice2[idx] = val
-	}
+    for idx, val := range slice1 {
+        slice2[idx] = val
+    }
 
-	slice2[1] = 100
+    slice2[1] = 100
 
-	fmt.Println(slice1) // [1,2,3,4,5]
-	fmt.Println(slice2) // [100,2,3,4,5]
+    fmt.Println(slice1) // [1,2,3,4,5]
+    fmt.Println(slice2) // [100,2,3,4,5]
 ```
 
 ### Slice を引数に渡す
@@ -841,83 +841,83 @@ func main() {
 
 ```go
 func main() {
-	m = make(map[string]string)
-	m["KEY1"] = "VALUE1"
-	m["KEY2"] = "VALUE2"
-	m["KEY3"] = "VALUE3"
-	fmt.Println(m["KEY1"])
-	fmt.Println(m["KEY2"])
-	fmt.Println(m["KEY3"])
+    m = make(map[string]string)
+    m["KEY1"] = "VALUE1"
+    m["KEY2"] = "VALUE2"
+    m["KEY3"] = "VALUE3"
+    fmt.Println(m["KEY1"])
+    fmt.Println(m["KEY2"])
+    fmt.Println(m["KEY3"])
 ```
 
 初期値あり
 
 ```go
 func main() {
-	var m = map[string]string{
-		"KEY1":"VALUE1",
-		"KEY2":"VALUE2",
-		"KEY3":"VALUE3",
-	}
-	m["KEY4"] = "VALUE4"
-	m["KEY5"] = "VALUE5"
-	m["KEY6"] = "VALUE6"
+    var m = map[string]string{
+        "KEY1":"VALUE1",
+        "KEY2":"VALUE2",
+        "KEY3":"VALUE3",
+    }
+    m["KEY4"] = "VALUE4"
+    m["KEY5"] = "VALUE5"
+    m["KEY6"] = "VALUE6"
 
-	// 順序はランダム
-	for key, value := range m {
-		fmt.Printf("key: %s, value: %s \n", key, value)
-	}
+    // 順序はランダム
+    for key, value := range m {
+    fmt.Printf("key: %s, value: %s \n", key, value)
+    }
 ```
 
 順序をソートしたい -> Key 用の Slice 作成 -> これをソートして Loop する。
 
 ```go
 func main() {
-	var m = map[string]string{
-		"KEY1":"VALUE1",
-		"KEY2":"VALUE2",
-		"KEY3":"VALUE3",
-	}
-	m["KEY4"] = "VALUE4"
-	m["KEY5"] = "VALUE5"
-	m["KEY6"] = "VALUE6"
+    var m = map[string]string{
+        "KEY1":"VALUE1",
+        "KEY2":"VALUE2",
+    "KEY3":"VALUE3",
+    }
+    m["KEY4"] = "VALUE4"
+    m["KEY5"] = "VALUE5"
+    m["KEY6"] = "VALUE6"
 
-	// Keyだけ取り出す
-	var sortedKeys []string
-	for key, _ := range m {
-		sortedKeys = append(sortedKeys, key)
-	}
-	sort.Strings(sortedKeys)
+    // Keyだけ取り出す
+    var sortedKeys []string
+    for key, _ := range m {
+        sortedKeys = append(sortedKeys, key)
+    }
+    sort.Strings(sortedKeys)
 
-	// SortされたKeyでLoopしてMapの中身を取り出す
-	for _, key := range sortedKeys {
-		fmt.Println(m[key])
-	}
+    // SortされたKeyでLoopしてMapの中身を取り出す
+    for _, key := range sortedKeys {
+        fmt.Println(m[key])
+    }
 ```
 
 要素削除
 
 ```go
 func main() {
-	nameMap := map[int]string{1:"takakuwa", 2:"makito", 3:"fumi"}
-	fmt.Println(len(nameMap)) // 3
-	delete(nameMap, 1) // 副作用
-	fmt.Println(len(nameMap)) // 2
+    nameMap := map[int]string{1:"takakuwa", 2:"makito", 3:"fumi"}
+    fmt.Println(len(nameMap)) // 3
+    delete(nameMap, 1) // 副作用
+    fmt.Println(len(nameMap)) // 2
 ```
 
 要素有無チェック
 
 ```go
 func main() {
-	nameMap := make(map[int]string)
-	nameMap[1] = "takakuwa"
-	nameMap[2] = "makito"
+    nameMap := make(map[int]string)
+    nameMap[1] = "takakuwa"
+    nameMap[2] = "makito"
 
-	if val, ok := nameMap[3]; ok {
-		fmt.Println("Here is fumi.", val)
-	} else {
-		fmt.Println("NO fumi here.")
-	}
+    if val, ok := nameMap[3]; ok {
+        fmt.Println("Here is fumi.", val)
+    } else {
+        fmt.Println("NO fumi here.")
+    }
 ```
 
 ## エラーハンドリング
