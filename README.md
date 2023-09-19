@@ -924,6 +924,21 @@ func main() {
 
 - 参考：[Go のエラーハンドリング](https://zenn.dev/spiegel/books/error-handling-in-golang/viewer/intro)
 
+# 並列処理 と 並行処理
+
+- 参考：[並行処理と並列処理](https://zenn.dev/hsaki/books/golang-concurrency/viewer/term)
+- 並行/Concurrency：複数の処理を**独立に**実行できる構成のこと
+- 並列/Parallelism：複数の処理を**同時に**実行すること
+- **並列は並行を包含している**ので、「**並行処理は、並列に実行されるかもしれない。**」とも言える。
+
+## Go で 複数の処理を同時に実行できるようにする。
+
+- goroutine を使うことで、main スレッド(routine)とは別スレッド/routine を`go`文を使うことで作成できる。
+- 各 routine は、チャネルを介すことで値の受渡しをすることができる。
+- main ルーチンが終わるとその他のルーチンを強制終了されるため、`sync.WaitGroup`を使う等して**子ルーチンが終了するまで main ルーチンをブロックする**という制御を入れてあげる。
+- ✔Go で並行処理を実現するには、main ルーチンより複数のルーチンを意図的に作成してそこで処理を並行に実行させることになる。
+- **Web API は、マルチスレッド? 自動的に複数の処理を同時に実行できる/並列処理になる？**
+
 # 開発環境
 
 - Linter（goLint）
