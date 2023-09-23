@@ -549,7 +549,16 @@ func main() {
 - **どんな型でも格納 OK。演算はできない。**
 - 利用例: JSON 読取(文字/interface{}) -変換-> 特定の struct へ変換
 
-#### Type Assertion / 型参照
+### 変数の型確認方法(①reflect.TypeOf ②fmt.Printf("%T", var))
+```go
+// reflect.TypeOf
+func main() {
+	sec := 1 * time.Second
+	fmt.Println(reflect.TypeOf(sec)) // time.Duration
+	fmt.Printf("%T", sec)            // time.Duration
+```
+
+### Type Assertion / 型参照
 
 - 第 1 引数:値　第 2 引数:参照結果(true/false)
 
@@ -565,7 +574,7 @@ str, isString := num.(string)
 fmt.Println(str, isString)     // 空文字 false
 ```
 
-#### Type Switch / 型スイッチ
+### Type Switch / 型スイッチ
 
 ```go
 func main() {
@@ -937,7 +946,149 @@ func main() {
 - 各 routine は、チャネルを介すことで値の受渡しをすることができる。
 - main ルーチンが終わるとその他のルーチンを強制終了されるため、`sync.WaitGroup`を使う等して**子ルーチンが終了するまで main ルーチンをブロックする**という制御を入れてあげる。
 - ✔Go で並行処理を実現するには、main ルーチンより複数のルーチンを意図的に作成してそこで処理を並行に実行させることになる。
-- **Web API は、マルチスレッド? 自動的に複数の処理を同時に実行できる/並列処理になる？**
+- API の場合「**リクエストが来るごとに、新しいゴールーチンを go 文で立てる**」といった動きになる。
+
+# 標準ライブラリ standard library
+
+## [math/rand](https://pkg.go.dev/math/rand)
+- 乱数を生成するためのライブラリ。
+- 生成される乱数が一定 OR 毎回異なる値となるように**Seed値**を設定する。
+
+### 使い方（DefaultRandインスタンスを使う場合）
+1. `rand.Seed`関数 -> Seed値設定
+2. 好きな乱数生成関数を使う。(`rand.Int()`関数, `rand.Intn(n)`関数, `rand.Float64()`関数)
+```go
+func main() {
+	rand.Seed(time.Now().Unix())
+	fmt.Println(rand.Int())      // 7726282257792290944
+	fmt.Println(rand.Intn(1000)) // 750
+```
+
+### 使い方（自らRandインスタンスを生成する場合）
+1. [rand.NewSource(seed int)](https://github.com/golang/go/blob/master/src/math/rand/rand.go#L51)関数でSourceインスタンス生成。
+2. [rand.New(src Source)](https://github.com/golang/go/blob/master/src/math/rand/rand.go#L78)関数でRandインスタンス生成。
+3. 2で生成したRandインスタンスで各乱数生成関数を使う。
+```go
+func NewRandSource() *rand.Rand {
+    src := rand.NewSource(time.Now().Unix())
+	rnd := rand.New(src)
+    return rnd
+}
+
+func main() {
+	rnd := NewRandSource()
+	fmt.Println(rnd.Int())      // 3247200792509923393
+	fmt.Println(rnd.Intn(1000)) // 283
+```
+
+### 早見表
+|種類|関数|
+|----|----|
+|整数(64bit)|`rand.Int()`|
+|整数(32bit)|`rand.Int31()`|
+|整数(0~Nの間)|`rand.Intn()`|
+|小数(64bit)|`rand.Float64()`|
+|小数(32bit)|`rand.Float32()`|
+
+### rand.Xxxxで使える`関数` と struct経由で使える`メソッド`
+- ライブラリ内で、Defaultの乱数generator「[globalRandGenerator](https://github.com/golang/go/blob/master/src/math/rand/rand.go#L312)」変数が定義されており、**`rand.Xxxx`関数ではこのDefaultの乱数generatorを利用している。**
+```go
+// globalRand() で globalRandGenerator を取得
+func Int() int { return globalRand().Int() }
+func Int31() int32 { return globalRand().Int31() }
+```
+- 対して、自らRandインスタンスを生成した場合は そのインスタンスに対して以下の`(r *Rand)付のメソッド`を呼び出すことになる。
+```go
+func (r *Rand) Int() int {
+	u := uint(r.Int63())
+	return int(u << 1 >> 1)
+}
+func (r *Rand) Int31() int32 { return int32(r.Int63() >> 32) }
+```
+
+### SourceはIFで、RandはStruct。
+- [rand.NewSource(seed int)関数](https://github.com/golang/go/blob/master/src/math/rand/rand.go#L51)では、SourceIFにMatchするStructインスタンスを生成。
+- [rand.New(src Source)関数](https://github.com/golang/go/blob/master/src/math/rand/rand.go#L78)では、RandのStructインスタンスを生成。
+```go
+type Source interface {
+	Int63() int64
+	Seed(seed int64)
+}
+// SourceIFの実装であるRand構造体を使っていく。
+type Rand struct {
+    //....
+}
+func (r *Rand) Int63() int64 {}
+func (r *Rand) Seed(seed int64)
+```
+
+## [time](https://pkg.go.dev/time)
+- Go1.9以前：`time.Now()` -> "wall clock"のみ取得
+- Go1.9以降：`time.Now()` -> "wall clock"＋"monotonic clock"を取得。
+- wall clock：時刻を示す。YYYY/MM/DD HH時MM分SS秒
+- monotonic clock：時刻を計算する。
+### 使い方
+- `time.Now()`関数 -> Local Timezone付きで現在時刻取得。
+- `LoadLocation(定義済TZ名 string)`関数 -> Location(TZ)取得
+- **LoadLocation関数は外部依存があるため、ソースがランタイムに依存する** -> **決め打ちで`FixedZone(TZ名, offset)`関数を使う方が確実。**
+- `time.Date(year,month,day,hour,min,sec,nsec,loc)`関数 -> Time生成
+- `(t *time).Format(format string)`関数：【Time→Format文字列】
+- **引数layoutに渡す時刻は「2006年1月2日15時4分5秒 アメリカ山地標準時MST(GMT-0700)」のものを使うことになっている。。**
+- `time.Parse(format, targetStr string)`関数：【文字列→Time生成】
+- `time.ParseInLocation(format, targetStr, loc)`関数：【TZ込文字列→
+Time生成】
+- 参考：[Goで時刻を扱うチートシート](https://zenn.dev/hsaki/articles/go-time-cheatsheet)
+```go
+func main() {
+	// time.Now() -> Local Timezoneを設定してくれる
+	japanTime := time.Now()
+	fmt.Println(japanTime)          // 2023-09-23 12:17:12.6611893 +0900 JST m=+0.002200101
+	fmt.Println(japanTime.String()) // 2023-09-23 12:17:12.6611893 +0900 JST m=+0.002200101
+	// UTC時刻取得
+	utcTime := japanTime.UTC()
+	fmt.Println(utcTime)            // 2023-09-23 03:18:57.0224089 +0000 UTC
+    // Unix時間取得
+	fmt.Println(utcTime.Unix())     // 1695441393
+
+	// Timezone指定
+	// 1. 既存Timezone取得【LoadLocation関数】
+	jst, err := time.LoadLocation("Asia/Tokyo")
+    if err != nil {
+        panic(err)
+    }
+	// 2. 自分でTimezone作成【FixedZone関数】
+	customJst := time.FixedZone("Custom Asia/Tokyo", 9*60*60)
+	t1 := time.Date(2023, time.September, 10, 23, 0, 0, 0, jst)
+	t2 := time.Date(2023, time.September, 10, 23, 0, 0, 0, customJst)
+	// UTC時刻に時差が考慮された時刻が表示される
+	fmt.Println(t1) // 2009-11-10 23:00:00 +0900 JST
+	fmt.Println(t2) // 2009-11-10 23:00:00 +0900 Custom Asia/Tokyo
+
+	// 3. Time -> Format　して文字列取得【Format関数】
+	// 既存Format: https://pkg.go.dev/time#pkg-constants
+	fmt.Println(t1.Format(time.RFC3339))          // 2023-09-10T23:00:00+09:00
+	fmt.Println(t1.Format("2006-01-02"))          // 2023-09-10
+	fmt.Println(t1.Format("2006-01-02 15:04:05")) // 2023-09-10 23:00:00
+
+	// 4. 文字列 -> Time【Parse(format string, targetString: string)関数】
+	// 4-1. Parse without timezone
+	targetStr1 := "2022-03-23"
+	format1 := "2006-01-02"
+	t3, err := time.Parse(format1, targetStr1)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(t3) // 2022-03-23 00:00:00 +0000 UTC
+	// 4-1. Parse with timezone
+	targetStr2 := "2022-03-23T07:00:00+09:00"
+	loc, _ := time.LoadLocation("Asia/Tokyo")
+	t4, err := time.ParseInLocation(time.RFC3339, targetStr2, loc)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(t4) // 2022-03-23 07:00:00 +0900 JST
+```
+
 
 # 開発環境
 
