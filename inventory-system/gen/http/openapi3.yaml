@@ -1,0 +1,179 @@
+openapi: 3.0.3
+info:
+  title: Inteventory System Service
+  description: Service for adding numbers, a Goa teaser
+  version: "1.0"
+servers:
+- url: http://localhost:8008
+paths:
+  /products:
+    post:
+      tags:
+      - inventory
+      summary: create inventory
+      operationId: inventory#create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRequestBody'
+            example:
+              productDescription: Voluptatum maxime debitis soluta.
+              productMinStock: 1041205383
+              productName: Occaecati consequuntur amet inventore.
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Voluptates aliquid consectetur voluptatem est et architecto.
+              example: Ut et iste quo consectetur.
+  /products/{productId}:
+    delete:
+      tags:
+      - inventory
+      summary: delete inventory
+      operationId: inventory#delete
+      parameters:
+      - name: productId
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 1889543917585190756
+          format: int64
+        example: 8092432174734788691
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Minus assumenda dolores eius id.
+              example: Blanditiis sit incidunt ut.
+    get:
+      tags:
+      - inventory
+      summary: find inventory
+      operationId: inventory#find
+      parameters:
+      - name: productId
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 934437022219256405
+          format: int64
+        example: 162717795139778379
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Findproductresult'
+              example:
+                productDescription: Necessitatibus veritatis beatae dignissimos sint.
+                productId: 8508256704161221233
+                productMinStock: 543910598
+                productName: Corporis libero.
+    put:
+      tags:
+      - inventory
+      summary: update inventory
+      operationId: inventory#update
+      parameters:
+      - name: productId
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 1003383176146660867
+          format: int64
+        example: 9129028675761445029
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRequestBody'
+            example:
+              productDescription: Itaque ut sunt.
+              productMinStock: 136779013
+              productName: Sint rerum ab.
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Autem minima voluptatibus dolorem optio quas voluptatum.
+              example: Veniam inventore explicabo asperiores.
+components:
+  schemas:
+    CreateRequestBody:
+      type: object
+      properties:
+        productDescription:
+          type: string
+          example: Sapiente animi.
+        productMinStock:
+          type: integer
+          example: 207105449
+          format: int32
+        productName:
+          type: string
+          example: Mollitia eaque doloribus.
+      example:
+        productDescription: Voluptatem error quo quam dolorem aut ut.
+        productMinStock: 401706337
+        productName: Molestiae a.
+      required:
+      - productName
+    Findproductresult:
+      type: object
+      properties:
+        productDescription:
+          type: string
+          example: Alias et.
+        productId:
+          type: integer
+          example: 4499941089678378978
+          format: int64
+        productMinStock:
+          type: integer
+          example: 37002061
+          format: int32
+        productName:
+          type: string
+          example: Soluta id sunt laboriosam debitis voluptatem.
+      example:
+        productDescription: Sit ratione.
+        productId: 6334311209503446111
+        productMinStock: 1406600207
+        productName: Nisi ut.
+    UpdateRequestBody:
+      type: object
+      properties:
+        productDescription:
+          type: string
+          example: Eveniet exercitationem sunt pariatur voluptate.
+        productMinStock:
+          type: integer
+          example: 690695473
+          format: int32
+        productName:
+          type: string
+          example: Enim eum architecto quas nihil est.
+      example:
+        productDescription: Aut quia sit occaecati quaerat tempora ut.
+        productMinStock: 827025724
+        productName: Qui aliquid optio dolor et praesentium nihil.
+tags:
+- name: inventory
+  description: The calc service performs operations on numbers.

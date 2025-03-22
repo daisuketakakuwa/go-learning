@@ -1,0 +1,64 @@
+// Code generated with goa v3.7.2, DO NOT EDIT.
+//
+// inventory protocol buffer definition
+//
+// Command:
+// $ goa gen inventory-system/api/svc/design
+
+syntax = "proto3";
+
+package inventory;
+
+option go_package = "/inventorypb";
+
+// The calc service performs operations on numbers.
+service Inventory {
+	// Create implements create.
+	rpc Create (CreateRequest) returns (CreateResponse);
+	// Update implements update.
+	rpc Update (UpdateRequest) returns (UpdateResponse);
+	// Find implements find.
+	rpc Find (FindRequest) returns (FindResponse);
+	// Delete implements delete.
+	rpc Delete (DeleteRequest) returns (DeleteResponse);
+}
+
+message CreateRequest {
+	string product_name = 1;
+	string product_description = 2;
+	sint32 product_min_stock = 3;
+}
+
+message CreateResponse {
+	string field = 1;
+}
+
+message UpdateRequest {
+	sint32 product_id = 1;
+	string product_name = 2;
+	string product_description = 3;
+	sint32 product_min_stock = 4;
+}
+
+message UpdateResponse {
+	string field = 1;
+}
+
+message FindRequest {
+	sint32 product_id = 1;
+}
+
+message FindResponse {
+	sint32 product_id = 1;
+	string product_name = 2;
+	string product_description = 3;
+	sint32 product_min_stock = 4;
+}
+
+message DeleteRequest {
+	sint32 product_id = 1;
+}
+
+message DeleteResponse {
+	string field = 1;
+}

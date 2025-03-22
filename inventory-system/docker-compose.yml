@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+  dbms:
+    image: postgres:latest
+    # how to restart the container
+    # ・no（*Default: no restart）
+    # ・always（always restart unless you stop the container clearly）
+    # ・on-failure（restart as many numbers as max-entries when the process's exit code is other than 0
+    restart: always
+    # read .env which is located in the same directory with this docker-compose.yml
+    environment:
+      TZ: ${OS_TIMEZONE}
+      # create "SUPERUSER" and "DATEBASE" which has the same name with POSTGRES_USER
+      # * if we set the name other than "postgres", the container keeps logging that "FATAL：role "postgres" does not exist"
+      POSTGRES_USER: ${DB_USER}
+      # the password of POSTGRES_USER
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    # healthcheck command is executed regulary while the container is working
+    healthcheck:
+      # 定期的に実行するコマンド
+      test: ["CMD-SHELL", "pg_isready -d postgres -U postgres"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    ports:
+      # EXTERNAL_PORT:INTERNAL_PORT
+      - ${DB_PORT}:5432
